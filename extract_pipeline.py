@@ -8,6 +8,7 @@ def extract_data(url):
     this takes in the API's url
     and returns a JSON-parsed object
     """
+    # check to see if the datatype is a string (url only)
     if type(url) != str:
           raise TypeError("Only strings are allowed")
     
