@@ -1,7 +1,7 @@
 import pandas as pd
 import requests
 
-from utils import extract_data, rename_columns
+from utils import extract_data, normalize_table, rename_columns
 
 
 def extract_data(url):
@@ -10,9 +10,8 @@ def extract_data(url):
     and returns a JSON-parsed object
     """
     # check to see if the datatype is a string (url only)
-    if type(url) != str:
-          raise TypeError("Only strings are allowed")
-    
+    if type(url) is not str:
+        raise TypeError("Only strings are allowed")
     try:
         response = requests.get(url)
         if response.status_code == 200:
@@ -24,20 +23,33 @@ def extract_data(url):
     parsed_json = response.json()
     return parsed_json
 
-data = response.json()
-results = data['results']
 
-normalized_result = pd.json_normalize(results)
+def normalize_table(parsed_json):
+    """
+    this takes in the parsed JSON, filters 'results'
+    and returns a normalized dataframe
+    """
+    # filter the index of 'results'
+    results = parsed_json['results']
+    # normalizes everything in the 'results' object
+    normalized_result = pd.json_normalize(results)
+    # converts normalized result into a DataFrame
+    normalized_df = pd.DataFrame(normalized_result)
+    return normalized_df
 
-# DATA TRANSFORMATION
-# Convert to dataframe
+# helper functions
+url = "https://randomuser.me/api/"
 
-normalized_frame = pd.DataFrame(normalized_result)
 
+
+parsed_json = extract_data(url)
+
+
+normalized_df = normalize_table(parsed_json)
 
 # DATA TRANSFORMATION: Select Columns
 
-selected_columns = normalized_frame[[
+selected_columns = normalized_df[[
     'name.title',
     'name.first',
     'name.last',
