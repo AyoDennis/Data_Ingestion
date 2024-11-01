@@ -1,8 +1,26 @@
 import requests
 import pandas as pd
-from rename_dataframe import rename_columns
+from utils import rename_columns
+from utils import extract_data 
 
-response = requests.get('https://randomuser.me/api/')
+def extract_data(url):
+    """
+    this takes in the API's url
+    and returns a JSON-parsed object
+    """
+    if type(url) != str:
+          raise TypeError("Only strings are allowed")
+    
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            print('successful connection')
+    except Exception as e:
+        print('if not successfully connected')
+        print(e)
+    # parse the API response into json
+    parsed_json = response.json()
+    return parsed_json
 
 data = response.json()
 results = data['results']
