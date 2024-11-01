@@ -15,13 +15,14 @@ def extract_data(url):
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            print('successful connection')
+            print('The connection was successful')
+            # parse the API response into json
+            parsed_json = response.json()
+            return parsed_json
+        else:
+            print(f"The connection was unsuccessful{response.status_code}")
     except Exception as e:
-        print('if not successfully connected')
-        print(e)
-    # parse the API response into json
-    parsed_json = response.json()
-    return parsed_json
+        print(f'Unsuccessful connection, {e}')
 
 
 def normalize_table(parsed_json):
@@ -39,9 +40,6 @@ def normalize_table(parsed_json):
 
 # helper functions
 url = "https://randomuser.me/api/"
-
-
-
 parsed_json = extract_data(url)
 
 
