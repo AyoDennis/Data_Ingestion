@@ -1,7 +1,8 @@
-import requests
 import pandas as pd
-from utils import rename_columns
-from utils import extract_data 
+import requests
+
+from utils import extract_data, rename_columns
+
 
 def extract_data(url):
     """
