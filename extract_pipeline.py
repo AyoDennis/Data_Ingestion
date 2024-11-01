@@ -40,6 +40,7 @@ def normalize_table(parsed_json):
 
 # helper functions
 url = "https://randomuser.me/api/"
+
 parsed_json = extract_data(url)
 
 
@@ -48,6 +49,7 @@ normalized_df = normalize_table(parsed_json)
 # DATA TRANSFORMATION: Select Columns
 
 selected_columns = normalized_df[[
+    'gender',
     'name.title',
     'name.first',
     'name.last',
