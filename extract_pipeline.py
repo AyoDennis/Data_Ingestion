@@ -1,4 +1,4 @@
-import pandas as pd
+
 import requests
 
 from utils import (extract_data, extract_female, extract_male, normalize_table,
