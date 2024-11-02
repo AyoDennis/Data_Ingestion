@@ -5,25 +5,6 @@ from utils import (extract_data, extract_female, extract_male, normalize_table,
                    rename_columns)
 
 
-def extract_data(url):
-    """
-    this takes in the API's url
-    and returns a JSON-parsed object
-    """
-    # check to see if the datatype is a string (url only)
-    if type(url) is not str:
-        raise TypeError("Only strings are allowed")
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            print('The connection was successful')
-            # parse the API response into json
-            parsed_json = response.json()
-            return parsed_json
-        else:
-            print(f"The connection was unsuccessful{response.status_code}")
-    except Exception as e:
-        print(f'Unsuccessful connection, {e}')
 
 
 def normalize_table(parsed_json):
