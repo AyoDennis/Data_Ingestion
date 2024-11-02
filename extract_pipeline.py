@@ -1,7 +1,6 @@
 from utils import (extract_data, extract_female, extract_male, normalize_table,
                    rename_columns)
 
-
 url = "https://randomuser.me/api/"
 
 parsed_json = extract_data(url)
