@@ -1,7 +1,8 @@
 import pandas as pd
 import requests
 
-from utils import extract_data, extract_male, normalize_table, rename_columns
+from utils import (extract_data, extract_female, extract_male, normalize_table,
+                   rename_columns)
 
 
 def extract_data(url):
@@ -86,3 +87,5 @@ renamed_df = rename_columns(selected_columns, {
 # DATA TRANSFORMATION: Split tables based on gender
 
 male_table = extract_male(renamed_df)
+
+female_table = extract_female(renamed_df)
