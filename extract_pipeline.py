@@ -8,7 +8,6 @@ parsed_json = extract_data(url)
 
 normalized_df = normalize_table(parsed_json)
 
-# DATA TRANSFORMATION: Select Columns
 
 selected_columns = normalized_df[[
     'gender',
@@ -45,7 +44,6 @@ renamed_df = rename_columns(selected_columns, {
     'dob.age': 'age'
     })
 
-# DATA TRANSFORMATION: Split tables based on gender
 
 male_table = extract_male(renamed_df)
 
