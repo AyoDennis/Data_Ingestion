@@ -1,5 +1,11 @@
+import logging
+
 import pandas as pd
 import requests
+
+
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(name)s:%(message)s')
+logging.getLogger().setLevel(20)
 
 
 def extract_data(url):
@@ -7,20 +13,21 @@ def extract_data(url):
     this takes in the API's url
     and returns a JSON-parsed object
     """
-    # check to see if the datatype is a string (url only)
     if type(url) is not str:
         raise TypeError("Only strings are allowed")
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            print('The connection was successful')
-            # parse the API response into json
+            logging.info('The connection was successful')
             parsed_json = response.json()
             return parsed_json
         else:
-            print(f"The connection was unsuccessful{response.status_code}")
+            logging.info(f"The connection unsuccessful{response.status_code}")
     except Exception as e:
         print(f'Unsuccessful connection, {e}')
+
+
+logging.info("finished making API request and parsing JSON object")
 
 
 def normalize_table(parsed_json):
@@ -28,11 +35,8 @@ def normalize_table(parsed_json):
     this takes in the parsed JSON, filters 'results'
     and returns a normalized dataframe
     """
-    # filter the index of 'results'
     results = parsed_json['results']
-    # normalizes everything in the 'results' object
     normalized_result = pd.json_normalize(results)
-    # converts normalized result into a DataFrame
     normalized_df = pd.DataFrame(normalized_result)
     return normalized_df
 
