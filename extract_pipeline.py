@@ -27,8 +27,6 @@ selected_columns = normalized_df[[
     ]]
 
 
-# DATA TRANSFORMATION: Rename Columns
-
 renamed_df = rename_columns(selected_columns, {
     'name.title': 'title',
     'name.first': 'first_name',
