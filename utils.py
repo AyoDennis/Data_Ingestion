@@ -75,4 +75,5 @@ def extract_female(renamed_df):
     This function filters females from the gender column.
     """
     females = renamed_df[renamed_df.gender == 'female']
+    logging.info("created female table")
     return females
