@@ -3,7 +3,6 @@ import logging
 import pandas as pd
 import requests
 
-
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(name)s:%(message)s')
 logging.getLogger().setLevel(20)
 
@@ -58,6 +57,7 @@ def rename_columns(df, new_names):
         The DataFrame with renamed columns.
      """
     renamed_df = df.rename(columns=new_names)
+    logging.info("finished renaming columns")
     return renamed_df
 
 
