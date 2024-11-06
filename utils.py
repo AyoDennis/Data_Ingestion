@@ -38,6 +38,7 @@ def normalize_table(parsed_json):
     results = parsed_json['results']
     normalized_result = pd.json_normalize(results)
     normalized_df = pd.DataFrame(normalized_result)
+    logging.info("finished dataframe conversion and normalization")
     return normalized_df
 
 
