@@ -85,7 +85,7 @@ def extract_female(renamed_df):
     return females
 
 
-def extract_random_profile_to_s3(df):
+def conversion_and_loading_to_s3(df):
     """
     Converts a DataFrame to Parquet and loads it to S3.
     """
