@@ -1,6 +1,6 @@
 import logging
 
-# import awswrangler as wr
+import awswrangler as wr
 import boto3
 import pandas as pd
 import requests
@@ -43,7 +43,7 @@ def normalize_table(parsed_json):
     return normalized_df
 
 
-def rename_columns(df, new_names):
+def rename_columns(normalized_df, new_names):
     """
     This function is for renaming columns in a pandas DataFrame.
     Args:
@@ -58,7 +58,7 @@ def rename_columns(df, new_names):
     Returns:
         The DataFrame with renamed columns.
      """
-    renamed_df = df.rename(columns=new_names)
+    renamed_df = normalized_df.rename(columns=new_names)
     logging.info("finished renaming columns")
     return renamed_df
 
@@ -81,16 +81,22 @@ def extract_female(renamed_df):
     return females
 
 
-# def csv_conversion(df, csv_name):
-#     """
-#     This function converts a dataframe to a csv file
-#     """
-#     if type(csv_name) is not str:
-#         raise TypeError("Only strings are allowed")
-#     # Write the DataFrame to the BytesIO object as parquet
-#     csv = df.to_csv(f'{csv_name}.csv', index=True)
-#     return csv
-
-
 client = boto3.client('s3')
+logging.info("s3 client initiated")
 client.create_bucket(Bucket='ayodeji-data-ingestion-bucket')
+
+
+def extract_random_profile_to_s3(df):
+    """
+    Converts a DataFrame to Parquet and loads it to S3.
+    """
+    s3_path = "s3://ayodeji-data-ingestion-bucket/random_profile/"
+    logging.info("s3 object initiated")
+    wr.s3.to_parquet(
+        df=df,
+        path=s3_path,
+        mode="append",
+        dataset=True
+    )
+    logging.info("parquet conversion successful")
+    return "Data successfully written to S3"
