@@ -1,5 +1,7 @@
 import logging
 
+# import awswrangler as wr
+import boto3
 import pandas as pd
 import requests
 
@@ -77,3 +79,18 @@ def extract_female(renamed_df):
     females = renamed_df[renamed_df.gender == 'female']
     logging.info("created female table")
     return females
+
+
+# def csv_conversion(df, csv_name):
+#     """
+#     This function converts a dataframe to a csv file
+#     """
+#     if type(csv_name) is not str:
+#         raise TypeError("Only strings are allowed")
+#     # Write the DataFrame to the BytesIO object as parquet
+#     csv = df.to_csv(f'{csv_name}.csv', index=True)
+#     return csv
+
+
+client = boto3.client('s3')
+# client.create_bucket(Bucket = 'ayodeji-data-ingestion-bucket')
