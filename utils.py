@@ -8,6 +8,10 @@ import requests
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(name)s:%(message)s')
 logging.getLogger().setLevel(20)
 
+client = boto3.client('s3')
+logging.info("s3 client initiated")
+client.create_bucket(Bucket='ayodeji-data-ingestion-bucket')
+
 
 def extract_data(url):
     """
@@ -81,22 +85,15 @@ def extract_female(renamed_df):
     return females
 
 
-client = boto3.client('s3')
-logging.info("s3 client initiated")
-client.create_bucket(Bucket='ayodeji-data-ingestion-bucket')
-
-
 def extract_random_profile_to_s3(df):
     """
     Converts a DataFrame to Parquet and loads it to S3.
     """
     s3_path = "s3://ayodeji-data-ingestion-bucket/random_profile/"
-    logging.info("s3 object initiated")
     wr.s3.to_parquet(
         df=df,
         path=s3_path,
         mode="append",
         dataset=True
     )
-    logging.info("parquet conversion successful")
     return "Data successfully written to S3"
