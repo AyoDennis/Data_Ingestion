@@ -1,16 +1,11 @@
 import logging
 
 import awswrangler as wr
-import boto3
 import pandas as pd
 import requests
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(name)s:%(message)s')
 logging.getLogger().setLevel(20)
-
-client = boto3.client('s3')
-logging.info("s3 client initiated")
-client.create_bucket(Bucket='ayodeji-data-ingestion-bucket')
 
 
 def extract_data(url):
@@ -85,7 +80,7 @@ def extract_female(renamed_df):
     return females
 
 
-def conversion_and_loading_to_s3(df):
+def file_conversion_and_s3_load(df):
     """
     Converts a DataFrame to Parquet and loads it to S3.
     """
