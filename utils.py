@@ -93,4 +93,4 @@ def extract_female(renamed_df):
 
 
 client = boto3.client('s3')
-# client.create_bucket(Bucket = 'ayodeji-data-ingestion-bucket')
+client.create_bucket(Bucket='ayodeji-data-ingestion-bucket')
