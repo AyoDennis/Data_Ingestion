@@ -1,4 +1,5 @@
-from utils import (extract_data, extract_female, extract_male, normalize_table,
+from initial_utils import (extract_data, extract_female, extract_male,
+                   file_conversion_and_s3_load, normalize_table,
                    rename_columns)
 
 url = "https://randomuser.me/api/?results=20"
@@ -46,3 +47,7 @@ renamed_df = rename_columns(selected_columns, {
 male_table = extract_male(renamed_df)
 
 female_table = extract_female(renamed_df)
+
+send_male = file_conversion_and_s3_load(male_table)
+
+send_female = file_conversion_and_s3_load(female_table)

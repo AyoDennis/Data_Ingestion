@@ -33,7 +33,7 @@ with DAG(
     )
 
     extract_female_gender = PythonOperator(
-        task_id="extract_male_gender",
+        task_id="extract_female_gender",
         python_callable=extract_female
     )
 
