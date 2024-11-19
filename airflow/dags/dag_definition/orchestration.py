@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import datetime
-from random_profiles.pipeline_utils import (extract_data, extract_female,
+from dags.random_profiles.pipeline_utils import (extract_data, extract_female,
                                             extract_male,
                                             file_conversion_and_s3_load,
                                             normalize_table, rename_columns)
