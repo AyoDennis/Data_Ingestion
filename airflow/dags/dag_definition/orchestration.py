@@ -1,10 +1,11 @@
+
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import datetime
-from dags.random_profiles.pipeline_utils import (extract_data, extract_female,
-                                            extract_male,
-                                            file_conversion_and_s3_load,
-                                            normalize_table, rename_columns)
+from random_profiles.pipeline_utils import (extract_data, extract_female,
+                                            extract_male, female_s3_load,
+                                            male_s3_load, rename_columns)
 
 with DAG(
     dag_id="data_ingestion",
@@ -17,13 +18,8 @@ with DAG(
         python_callable=extract_data
     )
 
-    normalize_tables = PythonOperator(
-        task_id="normalizing_table",
-        python_callable=normalize_table
-    )
-
     renaming_columns = PythonOperator(
-        task_id="renaming columns",
+        task_id="renaming_columns",
         python_callable=rename_columns
     )
 
@@ -37,11 +33,18 @@ with DAG(
         python_callable=extract_female
     )
 
-    parquet_conversion_and_s3_load = PythonOperator(
-        task_id="file_conversion_and_s3_load",
-        python_callable=file_conversion_and_s3_load
+    for_male_s3_load = PythonOperator(
+        task_id="male_parquet_s3_load",
+        python_callable=male_s3_load
     )
 
-    get_profiles >> normalize_tables >> \
-        renaming_columns >> extract_male_gender >> extract_female_gender >> \
-        parquet_conversion_and_s3_load
+    for_female_s3_load = PythonOperator(
+        task_id="female_parquet_s3_load",
+        python_callable=female_s3_load
+    )
+
+    get_profiles >> renaming_columns >> \
+        [extract_male_gender, extract_female_gender]
+    extract_male_gender >> for_male_s3_load
+    extract_female_gender >> for_female_s3_load
+

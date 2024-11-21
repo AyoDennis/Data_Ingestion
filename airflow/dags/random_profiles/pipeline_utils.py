@@ -1,19 +1,44 @@
+
 import logging
 
 import awswrangler as wr
+import boto3
 import pandas as pd
 import requests
+from airflow.models import Variable
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(name)s:%(message)s')
 logging.getLogger().setLevel(20)
 
 
-def extract_data(url):
+def aws_session():
+    session = boto3.Session(
+                    aws_access_key_id=Variable.get('access_key'),
+                    aws_secret_access_key=Variable.get('secret_key'),
+                    region_name="eu-central-1"
+    )
+    return session
+
+
+def boto3_client(aws_service):
+
+    client = boto3.client(aws_service,
+                          aws_access_key_id=Variable.get('access_key'),
+                          aws_secret_access_key=Variable.get('secret_key'),
+                          region_name="eu-central-1")
+
+    return client
+
+
+url = 'https://randomuser.me/api/?results=5'
+
+
+def extract_data():
     """
     this takes in the API's url
     and returns a JSON-parsed object
     """
-    url = "https://randomuser.me/api/?results=20"
+    url = 'https://randomuser.me/api/?results=20'
     if type(url) is not str:
         raise TypeError("Only strings are allowed")
     try:
@@ -31,82 +56,19 @@ def extract_data(url):
 logging.info("finished making API request and parsing JSON object")
 
 
-def normalize_table(parsed_json):
+def normalize_table():
     """
     this takes in the parsed JSON, filters 'results'
     and returns a normalized dataframe
     """
+    parsed_json = extract_data()
     results = parsed_json['results']
     normalized_result = pd.json_normalize(results)
-    normalized_df = pd.DataFrame(normalized_result)
     logging.info("finished dataframe conversion and normalization")
-    return normalized_df
+    return normalized_result
 
 
-def rename_columns(normalized_df, new_names):
-    """
-    This function is for renaming columns in a pandas DataFrame.
-    Args:
-        df: The pandas DataFrame to rename columns in.
-        new_names: A dictionary mapping old to new column names in this format.
-        new_names =
-        {
-            'old_column_1': 'new_column_1',
-            'old_column_2': 'new_column_2',
-        # ...
-        }
-    Returns:
-        The DataFrame with renamed columns.
-     """
-    renamed_df = normalized_df.rename(columns=new_names)
-    logging.info("finished renaming columns")
-    return renamed_df
-
-
-def extract_male(renamed_df):
-    """
-    This function filters males from the gender column
-    """
-    males = renamed_df[renamed_df.gender == 'male']
-    logging.info("created male table")
-    return males
-
-
-def extract_female(renamed_df):
-    """
-    This function filters females from the gender column.
-    """
-    females = renamed_df[renamed_df.gender == 'female']
-    logging.info("created female table")
-    return females
-
-
-def file_conversion_and_s3_load(df):
-    """
-    Converts a DataFrame to Parquet and loads it to S3.
-    """
-    s3_path = "s3://ayodeji-data-ingestion-bucket/random_profile/"
-    logging.info("s3 object initiated")
-    wr.s3.to_parquet(
-        df=df,
-        path=s3_path,
-        mode="append",
-        dataset=True
-    )
-    logging.info("parquet conversion successful")
-    return "Data successfully written to S3"
-
-
-
-
-url = "https://randomuser.me/api/?results=20"
-
-
-parsed_json = extract_data(url)
-
-
-normalized_df = normalize_table(parsed_json)
-
+normalized_df = normalize_table()
 
 selected_columns = normalized_df[[
     'gender',
@@ -126,26 +88,91 @@ selected_columns = normalized_df[[
     ]]
 
 
-renamed_df = rename_columns(selected_columns, {
-    'name.title': 'title',
-    'name.first': 'first_name',
-    'name.last': 'last_name',
-    'cell': 'phone',
-    'location.street.number': 'street_number',
-    'location.street.name': 'street_name',
-    'location.city': 'city',
-    'location.country': 'country',
-    'login.username': 'username',
-    'login.password': 'password',
-    'dob.date': 'dob',
-    'dob.age': 'age'
-    })
+def rename_columns():
+    """
+    This function is for renaming columns in a pandas DataFrame.
+    Args:
+        df: The pandas DataFrame to rename columns in.
+        new_names: A dictionary mapping old to new column names in this format.
+        new_names =
+        {
+            'old_column_1': 'new_column_1',
+            'old_column_2': 'new_column_2',
+        # ...
+        }
+    Returns:
+        The DataFrame with renamed columns.
+     """
+    renamed_dic = {
+        'gender': 'gender',
+        'name.title': 'title',
+        'name.first': 'first_name',
+        'name.last': 'last_name',
+        'cell': 'phone',
+        'location.street.number': 'street_number',
+        'location.street.name': 'street_name',
+        'location.city': 'city',
+        'location.country': 'country',
+        'login.username': 'username',
+        'login.password': 'password',
+        'dob.date': 'dob',
+        'dob.age': 'age'
+    }
+    renamed_df = selected_columns.rename(columns=renamed_dic)
+    logging.info("finished renaming columns")
+    return renamed_df
 
 
-male_table = extract_male(renamed_df)
+test = rename_columns()
 
-female_table = extract_female(renamed_df)
 
-send_male = file_conversion_and_s3_load(male_table)
+def extract_male():
+    """
+    This function filters males from the gender column
+    """
+    males = test[test["gender"] == "male"]
+    logging.info("created male table")
+    return males
 
-send_female = file_conversion_and_s3_load(female_table)
+
+def extract_female():
+    """
+    This function filters males from the gender column
+    """
+    females = test[test["gender"] == "female"]
+    logging.info("created female table")
+    return females
+
+
+def male_s3_load():
+    """
+    Converts a DataFrame to Parquet and loads it to S3.
+    """
+    s3_path = "s3://ayodeji-data-ingestion-bucket/random_profile/males"
+    logging.info("s3 object initiated")
+    wr.s3.to_parquet(
+        df=extract_male(),
+        path=s3_path,
+        mode="overwrite",
+        boto3_session=aws_session(),
+        dataset=True
+    )
+    logging.info("parquet conversion successful")
+    return "Data successfully written to S3"
+
+
+def female_s3_load():
+    """
+    Converts a DataFrame to Parquet and loads it to S3.
+    """
+    s3_path = "s3://ayodeji-data-ingestion-bucket/random_profile/females"
+    logging.info("s3 object initiated")
+    wr.s3.to_parquet(
+        df=extract_female(),
+        path=s3_path,
+        mode="overwrite",
+        boto3_session=aws_session(),
+        dataset=True
+    )
+    logging.info("parquet conversion successful")
+    return "Data successfully written to S3"
