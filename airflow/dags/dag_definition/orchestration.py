@@ -3,19 +3,24 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import datetime
-from random_profiles.pipeline_utils import (extract_data, extract_female,
+from random_profiles.pipeline_utils import (extract_data, extract_female, normalize_table,
                                             extract_male, female_s3_load,
                                             male_s3_load, rename_columns)
 
 with DAG(
     dag_id="data_ingestion",
-    start_date=datetime(2024, 11, 15),
+    start_date=datetime(2024, 11, 22),
     schedule_interval=None,
     catchup=False
 ) as dag:
     get_profiles = PythonOperator(
         task_id="getting_profiles",
         python_callable=extract_data
+    )
+
+    normalization_and_column_selection = PythonOperator(
+        task_id="normalize_and_select_columns",
+        python_callable=normalize_table
     )
 
     renaming_columns = PythonOperator(
@@ -43,7 +48,7 @@ with DAG(
         python_callable=female_s3_load
     )
 
-    get_profiles >> renaming_columns >> \
+    get_profiles >> normalization_and_column_selection >> renaming_columns >> \
         [extract_male_gender, extract_female_gender]
     extract_male_gender >> for_male_s3_load
     extract_female_gender >> for_female_s3_load

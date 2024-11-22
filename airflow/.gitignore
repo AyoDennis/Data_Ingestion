@@ -1,5 +1,4 @@
 .env
-__pycache__
-profile*
-leo-*
-rockets
+logs
+plugins
+terraform
