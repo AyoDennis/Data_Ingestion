@@ -24,7 +24,7 @@ with DAG(
     )
 
     renaming_columns = PythonOperator(
-        task_id="renaming_columns",
+        task_id="renaming_selected_columns",
         python_callable=rename_columns
     )
 
