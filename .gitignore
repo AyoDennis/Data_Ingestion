@@ -1,0 +1,6 @@
+.env
+logs
+plugins
+.terraform/providers*
+*terraform.tfstate*
+*.terraform*
