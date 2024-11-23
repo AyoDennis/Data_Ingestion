@@ -1,3 +1,8 @@
-resource "aws_s3_bucket" "data_ingestion" {
-  bucket = "ayodeji-data-ingestion-bucket"
+# Terraform Remote State
+terraform {
+  backend "s3" {
+    bucket = "ayodeji-state-bucket-data-ingestion"
+    key    = "key/terraform.tfstate"
+    region = "eu-central-1"
+  }
 }
