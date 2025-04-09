@@ -64,23 +64,12 @@ Open http://localhost:8080 in your browser (default credentials: airflow/airflow
 
 ## Usage
 
-Configure the Airflow connection to AWS in the Airflow UI
-Trigger the ETL DAG manually or wait for scheduled execution
-Monitor pipeline execution in the Airflow UI
-Verify data in the designated S3 bucket
-Configuration
+* Configure the Airflow connection to AWS in the Airflow UI
+* Trigger the ETL DAG manually or wait for scheduled execution
+* Monitor pipeline execution in the Airflow UI
+* Verify data in the designated S3 bucket
 
-Environment variables can be set in the docker-compose.yml file or through an .env file:
+## Acknowledgments
 
-AWS_ACCESS_KEY_ID: AWS access key
-AWS_SECRET_ACCESS_KEY: AWS secret key
-AWS_DEFAULT_REGION: AWS region
-S3_BUCKET_NAME: Target S3 bucket name
-License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-Acknowledgments
-
-Random User Generator API for providing the test data
-Apache Airflow, AWS, and Terraform communities for their excellent documentation
+* Random User Generator API for providing the test data
+* Apache Airflow, AWS, and Terraform communities for their excellent documentation
