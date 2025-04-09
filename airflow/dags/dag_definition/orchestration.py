@@ -3,9 +3,10 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import datetime
-from random_profiles.pipeline_utils import (extract_data, extract_female, normalize_table,
+from random_profiles.pipeline_utils import (extract_data, extract_female,
                                             extract_male, female_s3_load,
-                                            male_s3_load, rename_columns)
+                                            male_s3_load, normalize_table,
+                                            rename_columns)
 
 with DAG(
     dag_id="data_ingestion",
@@ -52,4 +53,3 @@ with DAG(
         [extract_male_gender, extract_female_gender]
     extract_male_gender >> for_male_s3_load
     extract_female_gender >> for_female_s3_load
-
