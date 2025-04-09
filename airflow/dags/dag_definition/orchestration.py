@@ -10,7 +10,7 @@ from random_profiles.pipeline_utils import (extract_data, extract_female, normal
 with DAG(
     dag_id="data_ingestion",
     start_date=datetime(2024, 11, 22),
-    schedule_interval=None,
+    schedule_interval='0 0 * * *',
     catchup=False
 ) as dag:
     get_profiles = PythonOperator(

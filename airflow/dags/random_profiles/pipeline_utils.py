@@ -34,7 +34,7 @@ def extract_data():
     this takes in the API's url
     and returns a JSON-parsed object
     """
-    url = 'https://randomuser.me/api/?results=20'
+    url = 'https://randomuser.me/api/?results=1000'
     if type(url) is not str:
         raise TypeError("Only strings are allowed")
     try:
