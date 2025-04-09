@@ -43,21 +43,26 @@ The infrastructure is provisioned using Terraform, and the application runs in D
 * Terraform installed (for infrastructure provisioning)
 * Installation
 
-Provision AWS Resources with Terraform:
-bash
-Copy
+### Provision AWS Resources with Terraform:
+`bash`
+
 cd terraform/
 terraform init
 terraform plan
 terraform apply
-Build and Start Containers:
-bash
-Copy
+
+### Build and Start Containers:
+`bash`
+
 docker-compose build
 docker-compose up -d
-Access Airflow UI:
+
+### Access Airflow UI:
+
 Open http://localhost:8080 in your browser (default credentials: airflow/airflow)
-Usage
+
+
+## Usage
 
 Configure the Airflow connection to AWS in the Airflow UI
 Trigger the ETL DAG manually or wait for scheduled execution
