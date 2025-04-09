@@ -1,12 +1,13 @@
 
 
-from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import datetime
 from random_profiles.pipeline_utils import (extract_data, extract_female,
                                             extract_male, female_s3_load,
                                             male_s3_load, normalize_table,
                                             rename_columns)
+
+from airflow import DAG
 
 with DAG(
     dag_id="data_ingestion",
