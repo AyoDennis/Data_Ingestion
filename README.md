@@ -46,7 +46,7 @@ The infrastructure is provisioned using Terraform, and the application runs in D
 ### Provision AWS Resources with Terraform:
 `bash`
 
-cd terraform/
+cd terraform /
 terraform init
 terraform plan
 terraform apply
